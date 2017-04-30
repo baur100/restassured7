@@ -16,6 +16,8 @@ public class RepotTest extends CommonFunctions{
 
     static String session=null;
     Properties prop=new Properties();
+    static String lastIssueId=null;
+
     @BeforeTest
     public void init() throws IOException {
         session=login();
@@ -32,13 +34,22 @@ public class RepotTest extends CommonFunctions{
                                 {null, null}
         };
     }
-    @Test(dataProvider = "testData1")
-    public void test1(String issueTitle, String issueBody){
-        String issueKey=null;
+    @Test(dataProvider = "testData1",priority=1)
+    public void createIssue(String issueTitle, String issueBody){
+        String issueId=null;
         Assert.assertNotNull(session);
-        issueKey=createReport(session, issueTitle,issueBody,prop.getProperty("PROJECT_NAME"));
-        Assert.assertNotNull(issueKey);
-        System.out.println(issueKey);
+        issueId=createReport(session, issueTitle,issueBody,prop.getProperty("PROJECT_NAME"));
+        Assert.assertNotNull(issueId);
+        System.out.println(issueId);
+        lastIssueId=issueId;
 
     }
+    @Test(priority=2)
+    public void deleteIssue(){
+        int a=Integer.valueOf(lastIssueId);
+        Assert.assertNotNull(session);
+        for(int i=0;i<6;i++)
+            Assert.assertTrue(deleteIssue(session,a--));
+    }
+
 }

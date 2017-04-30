@@ -33,7 +33,6 @@ public class CommonFunctions{
         return jpath.getString("session.name")+"="+jpath.getString("session.value");
     }
     public String createReport(String session, String issueTitle, String issueBody, String projectName){
-        String key=null;
         Response resp;
         resp=given().
                 header("Content-Type","application/json").
@@ -48,7 +47,20 @@ public class CommonFunctions{
                 statusCode(201).
         extract().
                 response();
-        return new JsonPath(resp.asString()).getString("key");
+        return new JsonPath(resp.asString()).getString("id");
+    }
+    public Boolean deleteIssue(String session,int issueId){
+        Response resp;
+        System.out.println("/rest/api/2/issue/"+Integer.toString(issueId));
+        resp=given().
+                header("Content-Type","application/json").
+                header("Cookie",session).
+        when().
+                delete("/rest/api/2/issue/"+Integer.toString(issueId)).
+        then().
+        extract().
+                response();
+        return (resp.getStatusCode()==204);
     }
 }
 
